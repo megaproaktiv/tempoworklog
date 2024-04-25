@@ -1,0 +1,5 @@
+JIRA_URL = "https://name.atlassian.net/"
+JIRA_USER = "john@doe.de"
+JIRA_PASSWORD = "ATBoy***"
+TEMPO_API_TOKEN = "sometoken-eu"
+TEMPO_BASE_URL = "https://api.tempo.io/4"

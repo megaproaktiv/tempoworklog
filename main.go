@@ -20,6 +20,7 @@ func main() {
 	// Defining flags.
 	period := flag.String("period", "week", "Choose the period: week, month, lastmonth")
 	project := flag.String("project", "", "Filter by project")
+	long := flag.Bool("long", false, "Show whole worklog entries")
 	// outputFormat := flag.String("output", "text", "Choose the output format: text, json, csv")
 	flag.Parse()
 
@@ -94,9 +95,12 @@ func main() {
 		startDate := work.StartDate
 		description := strings.ReplaceAll(work.Description, "\n", "")
 		max := 32
-		if len(description) > max {
-			description = description[:max]
+		if !*long {
+			if len(description) > max {
+				description = description[:max]
+			}
 		}
+
 		if err != nil {
 			fmt.Println("Error getting projectkey:", err)
 			projectId = "Unknown"

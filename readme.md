@@ -22,6 +22,7 @@ SumSpent: 9.00, SumBillable: 9.00
 | --------- | ---------------------------- |
 | period    | "week", "month", "lastmonth" |
 | project   | Project key                  |
+| long      | seeing whole log entries, default cut to 32 chars |
 
 ## Usage
 

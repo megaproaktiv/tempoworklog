@@ -21,6 +21,7 @@ func main() {
 	period := flag.String("period", "week", "Choose the period: week, month, lastmonth")
 	project := flag.String("project", "", "Filter by project")
 	long := flag.Bool("long", false, "Show whole worklog entries")
+	user := flag.String("user", "", "filter user")
 	// outputFormat := flag.String("output", "text", "Choose the output format: text, json, csv")
 	flag.Parse()
 
@@ -85,13 +86,22 @@ func main() {
 	fmt.Printf("Project Key,\t User,\tDate,\tIssue, \tTime Spent,\t Billable\tDescription\n")
 	sumSpent := 0
 	sumBillable := 0
+	accountIDfilter := ""
 	for _, work := range allResults {
 		hours := secondsToHours(work.TimeSpentSeconds)
 		hoursBillable := secondsToHours(work.BillableSeconds)
 		accountId := work.Author.AccountID
-		userName, err := jira.GetUserFromAccount(jira.AccountID(accountId))
 		issueId := strconv.Itoa(work.Issue.ID)
 		projectId, err := jira.GetProjectKeyfromIssue(jira.IssueID(issueId))
+		// Store accountid (which references user) if there is a userfilter
+		if *user == "" && accountIDfilter == "" {
+			accountIDfilter = accountId
+		}
+		// Skip if accountIDfilter is set and does not match
+		if accountIDfilter != "" && accountIDfilter == accountId {
+			continue
+		}
+		userName, err := jira.GetUserFromAccount(jira.AccountID(accountId))
 		startDate := work.StartDate
 		description := strings.ReplaceAll(work.Description, "\n", "")
 		max := 32
@@ -106,16 +116,18 @@ func main() {
 			projectId = "Unknown"
 		}
 		if *project == "" || (string(projectId) == *project) {
-			fmt.Printf("%s,\t%s,\t%s,\t%s,\t%s,\t%s,\t%s \n",
-				projectId,
-				userName,
-				startDate,
-				issueId,
-				hours,
-				hoursBillable,
-				description)
-			sumBillable += work.BillableSeconds
-			sumSpent += work.BillableSeconds
+			if *user == "" || (string(userName) == *user) {
+				fmt.Printf("%s,\t%s,\t%s,\t%s,\t%s,\t%s,\t%s \n",
+					projectId,
+					userName,
+					startDate,
+					issueId,
+					hours,
+					hoursBillable,
+					description)
+				sumBillable += work.BillableSeconds
+				sumSpent += work.BillableSeconds
+			}
 		}
 	}
 

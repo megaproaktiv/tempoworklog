@@ -23,6 +23,7 @@ SumSpent: 9.00, SumBillable: 9.00
 | period    | "week", "month", "lastmonth" |
 | project   | Project key                  |
 | long      | seeing whole log entries, default cut to 32 chars |
+| user      | filter user email            | 
 
 ## Usage
 
@@ -31,6 +32,12 @@ twl --period week --project WORLD
 ```
 
 Get all entries for the current week for the project WORLD
+
+```bash
+twl --period month --user john@doe.com
+```
+
+Get all entries for current month for user 
 
 ## Install
 

@@ -83,25 +83,25 @@ func main() {
 		answerLength = len(worklogs.Results)
 
 	}
-	fmt.Printf("Project Key,\t User,\tDate,\tIssue, \tTime Spent,\t Billable\tDescription\n")
+	fmt.Printf("Project Key,\t User,\tDate,\tIssue, \tTime Spent,\t Billable,\tDescription\n")
 	sumSpent := 0
 	sumBillable := 0
-	accountIDfilter := ""
+	// accountFilterId := ""
 	for _, work := range allResults {
 		hours := secondsToHours(work.TimeSpentSeconds)
 		hoursBillable := secondsToHours(work.BillableSeconds)
 		accountId := work.Author.AccountID
 		issueId := strconv.Itoa(work.Issue.ID)
 		projectId, err := jira.GetProjectKeyfromIssue(jira.IssueID(issueId))
-		// Store accountid (which references user) if there is a userfilter
-		if *user == "" && accountIDfilter == "" {
-			accountIDfilter = accountId
-		}
-		// Skip if accountIDfilter is set and does not match
-		if accountIDfilter != "" && accountIDfilter == accountId {
-			continue
-		}
 		userName, err := jira.GetUserFromAccount(jira.AccountID(accountId))
+		// if *user != "" {
+		// 	fmt.Println("Filter set")
+		// 	if *user == string(userName) {
+		// 		fmt.Println("Filter found")
+		// 		accountFilterId = accountId
+		// 	}
+		// }
+		// fmt.Printf("%v - %v - %v ", accountFilterId, accountId, userName)
 		startDate := work.StartDate
 		description := strings.ReplaceAll(work.Description, "\n", "")
 		max := 32
@@ -117,6 +117,7 @@ func main() {
 		}
 		if *project == "" || (string(projectId) == *project) {
 			if *user == "" || (string(userName) == *user) {
+				// fmt.Println(*user, ":", accountId, ";", userName)
 				fmt.Printf("%s,\t%s,\t%s,\t%s,\t%s,\t%s,\t%s \n",
 					projectId,
 					userName,

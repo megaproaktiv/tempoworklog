@@ -1,3 +1,4 @@
 go.work
 twl
 dist
+.DS_Store

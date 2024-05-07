@@ -62,6 +62,15 @@ func main() {
 	answerLength := limit
 	for answerLength > 0 {
 		counter++
+		if counter > safetyCounter {
+			break
+		}
+		if answerLength < increment {
+			break
+		}
+		if worklogs.Metadata.Next == "" {
+			break
+		}
 		response, err = tempo.CallTempoNext(worklogs.Metadata.Next)
 		if counter > safetyCounter {
 			break

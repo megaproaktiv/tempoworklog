@@ -12,6 +12,12 @@ tasks:
       - go build -o {{.BIN}} main.go
     silent: true
 
+  run:
+    desc: Run the project
+    cmds:
+      - go run main.go
+    silent: true
+
   install:
     desc: Install binary in macos
     deps:

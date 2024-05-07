@@ -53,7 +53,8 @@ func CallTempoAPI(from string, to string) (string, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error making the request:", err)
+		fmt.Println("Error making the tempo request:", err)
+		fmt.Println("Url:", urlFinite)
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -96,7 +97,8 @@ func CallTempoNext(url string) (string, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error making the request:", err)
+		fmt.Println("Error making the tempo next request:", err)
+		fmt.Println("Url:", url)
 		return "", err
 	}
 	defer resp.Body.Close()

@@ -22,6 +22,7 @@ func main() {
 	project := flag.String("project", "", "Filter by project")
 	long := flag.Bool("long", false, "Show whole worklog entries")
 	user := flag.String("user", "", "filter user")
+	// debug := flag.Bool("debug", false, "debug output")
 	// outputFormat := flag.String("output", "text", "Choose the output format: text, json, csv")
 	flag.Parse()
 
@@ -65,13 +66,12 @@ func main() {
 		if counter > safetyCounter {
 			break
 		}
-		if answerLength < increment {
-			break
-		}
-		if worklogs.Metadata.Next == "" {
+
+		if len(worklogs.Metadata.Next) == 0 {
 			break
 		}
 		response, err = tempo.CallTempoNext(worklogs.Metadata.Next)
+
 		if counter > safetyCounter {
 			break
 		}

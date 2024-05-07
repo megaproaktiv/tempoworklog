@@ -4,18 +4,25 @@ version: "3"
 
 vars:
   BIN: twl
+  DIST: dist
 
 tasks:
   build:
     desc: Build the project
     cmds:
-      - go build -o {{.BIN}} main.go
+      - go build -o {{.DIST}}/{{.BIN}} main/main.go
+    silent: true
+
+  run:
+    desc: Build the project
+    cmds:
+      - go run main/main.go
     silent: true
 
   run:
     desc: Run the project
     cmds:
-      - go run main.go
+      - go run main/main.go
     silent: true
 
   install:
@@ -23,5 +30,5 @@ tasks:
     deps:
       - build
     cmds:
-      - sudo cp {{.BIN}} /usr/local/bin/{{.BIN}}
+      - sudo cp {{.DIST}}/{{.BIN}} /usr/local/bin/{{.BIN}}
     silent: true

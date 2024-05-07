@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"twl"
 
 	"github.com/joho/godotenv"
 )
@@ -18,6 +19,9 @@ func CallTempoAPI(from string, to string) (string, error) {
 		log.Fatal("Error finding user's home directory:", err)
 	}
 	environmentFile := homeDir + string(os.PathSeparator) + ".tempoworklog"
+	if !twl.FileExists(environmentFile) {
+		log.Fatal("Error finding .env file:", environmentFile)
+	}
 	err = godotenv.Load(environmentFile)
 	if err != nil {
 		log.Fatal("Error loading .env file: ", environmentFile)
@@ -25,6 +29,15 @@ func CallTempoAPI(from string, to string) (string, error) {
 	// Set your Tempo API token, the base URL for Tempo, and the issue key you're interested in.
 	apiToken := os.Getenv("TEMPO_API_TOKEN")
 	tempoBaseURL := os.Getenv("TEMPO_BASE_URL") // Something like "https://api.tempo.io/core/3"
+
+	if tempoBaseURL == "" {
+		log.Printf("Searching for TEMPO_BASE_URL in the environment file:", environmentFile)
+		log.Fatal("TEMPO_BASE_URL is not set in the .env file.")
+	}
+	if apiToken == "" {
+		log.Printf("Searching for TEMPO_API_TOKEN in the environment file:", environmentFile)
+		log.Fatal("TEMPO_API_TOKEN is not set in the .env file.")
+	}
 
 	baseURL := fmt.Sprintf("%s/worklogs", tempoBaseURL)
 	parsedURL, err := url.Parse(baseURL)
@@ -57,6 +70,11 @@ func CallTempoAPI(from string, to string) (string, error) {
 		fmt.Println("Url:", urlFinite)
 		return "", err
 	}
+	if resp.StatusCode != 200 {
+		fmt.Println("Error: Status code is not 200:", resp.Status)
+		fmt.Println("Url:", resp.Request.URL)
+		return "", err
+	}
 	defer resp.Body.Close()
 
 	// Read the response body.
@@ -82,6 +100,10 @@ func CallTempoNext(url string) (string, error) {
 	}
 	// Set your Tempo API token, the base URL for Tempo, and the issue key you're interested in.
 	apiToken := os.Getenv("TEMPO_API_TOKEN")
+	if apiToken == "" {
+		log.Printf("Searching for TEMPO_API_TOKEN in the environment file:", environmentFile)
+		log.Fatal("TEMPO_API_TOKEN is not set in the .env file.")
+	}
 
 	urlFinite := url
 	req, err := http.NewRequest("GET", urlFinite, nil)
@@ -99,6 +121,12 @@ func CallTempoNext(url string) (string, error) {
 	if err != nil {
 		fmt.Println("Error making the tempo next request:", err)
 		fmt.Println("Url:", url)
+		fmt.Println("Request url:", urlFinite)
+		return "", err
+	}
+	if resp.StatusCode != 200 {
+		fmt.Println("Error: Status code is not 200:", resp.Status)
+		fmt.Println("Url:", resp.Request.URL)
 		return "", err
 	}
 	defer resp.Body.Close()
